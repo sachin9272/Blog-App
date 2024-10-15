@@ -1,0 +1,99 @@
+import React, { useState } from "react";
+import { Box, Typography, TextField, Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import axios from 'axios';
+
+const Register = () => {
+  const navigate = useNavigate();
+  const [inputs, setInputs] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+  const handleChange = (e) => {
+    setInputs((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.value,
+    }));
+  };
+  const handleSubmit = async(e) => {
+    e.preventDefault();
+    try {
+      const {data} = await axios.post('http://localhost:8080/api/v1/user/register',{name:inputs.name, email:inputs.email, password:inputs.password})
+      if(data.success){
+        alert("User Register Successfully");
+        navigate('/login');
+      }
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }
+
+  return (
+    <>
+      <form onSubmit={handleSubmit}>
+        <Box
+          maxWidth={450}
+          display="flex"
+          flexDirection={"column"}
+          alignItems={"center"}
+          justifyContent={"center"}
+          margin={"auto"}
+          marginTop={5}
+          boxShadow={"10px 10px 20px #ccc"}
+          padding={3}
+          borderRadius={5}
+          // bgcolor={"#1a58c612"}
+        >
+          <Typography variant="h4" padding={3} textAlign="center">
+            Register
+          </Typography>
+          <TextField
+            placeholder="Name"
+            name="name"
+            margin="normal"
+            type="text"
+            required
+            value={inputs.name}
+            onChange={handleChange}
+          />
+          <TextField
+            placeholder="Email"
+            name="email"
+            margin="normal"
+            type="email"
+            required
+            value={inputs.email}
+            onChange={handleChange}
+          />
+          <TextField
+            placeholder="Password"
+            name="password"
+            margin="normal"
+            type="password"
+            required
+            value={inputs.password}
+            onChange={handleChange}
+          />
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            sx={{ borderRadius: 3, marginTop: 3 }}
+          >
+            Submit
+          </Button>
+          <Button
+            onClick={() => navigate("/login")}
+            sx={{ borderRadius: 3, marginTop: 3 }}
+          >
+            Already Registered? Please Login
+          </Button>
+        </Box>
+      </form>
+    </>
+  );
+};
+
+export default Register;
